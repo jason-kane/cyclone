@@ -2,11 +2,8 @@
 
 from twisted.python import log
 from twisted.protocols import basic
-from twisted.internet import defer, protocol
+from twisted.internet import defer
 import cgi
-import errno
-import fcntl
-import functools
 import time
 import urlparse
 
@@ -198,7 +195,8 @@ class HTTPRequest(object):
         self.headers = headers or HTTPHeaders()
         self.body = body or ""
 	if connection and connection.xheaders:
-	    self.remote_ip = headers.get("X-Real-Ip", remote_ip)
+            self.remote_ip = headers.get(
+                "X-Real-Ip", headers.get("X-Forwarded-For", remote_ip))
 	    self.protocol = headers.get("X-Scheme", protocol) or "http"
 	else:
 	    self.remote_ip = remote_ip
